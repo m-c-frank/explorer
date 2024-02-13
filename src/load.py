@@ -91,87 +91,87 @@ print("number of stored nodes:", len(stored_nodes))
 print("number of files:", len(files))
 
 # %%
-from ollama import Client
+# from ollama import Client
 
-client = Client(
-    host="http://192.168.2.177:11434"
-)
+# client = Client(
+#     host="http://192.168.2.177:11434"
+# )
 
-# %%
-system_message = "# system message\n\nyou are an expert in the concept of the following note. you provide orthogonal viewpoints and specialize in rephrasing the core concept from a completely orthogonal viewpoint"
-pre_prompt = "\n\n## pre prompt\n\nhere is the note you need to rephrase:\n\n"
-alignment_prompt = "\n\n## alignment prompt\n\nbe creative and respond with a high information to token ratio. please dont speak to much and get straight to the core of it"
-response_primer = "\n\n## response\n\nconsidering only the given context given within <c></c>:\nfrom the perspective of "
+# # %%
+# system_message = "# system message\n\nyou are an expert in the concept of the following note. you provide orthogonal viewpoints and specialize in rephrasing the core concept from a completely orthogonal viewpoint"
+# pre_prompt = "\n\n## pre prompt\n\nhere is the note you need to rephrase:\n\n"
+# alignment_prompt = "\n\n## alignment prompt\n\nbe creative and respond with a high information to token ratio. please dont speak to much and get straight to the core of it"
+# response_primer = "\n\n## response\n\nconsidering only the given context given within <c></c>:\nfrom the perspective of "
 
-def construct_prompt(node):
-    def to_markdown_codeblock(text):
-        return "\n\n <c>```markdown\n" + text + "\n```</c>"
-    return system_message + pre_prompt + to_markdown_codeblock(node.text) + alignment_prompt + response_primer
+# def construct_prompt(node):
+#     def to_markdown_codeblock(text):
+#         return "\n\n <c>```markdown\n" + text + "\n```</c>"
+#     return system_message + pre_prompt + to_markdown_codeblock(node.text) + alignment_prompt + response_primer
 
 
-for node in nodes:
-    user_prompt = construct_prompt(node)
-    response = client.generate(model="mistral-ft-optimized-1218:latest",prompt=user_prompt, stream=False)
-    print(response)
-    print(response["response"])
-    new_id = str(uuid4()) # fix this ugly thing
-    new_node = Node(
-        type="generated",
-        text=response["response"],
-        local_id=new_id,
-        id=new_id
-    )
-    new_edge = Edge(
-        source=node.id,
-        target=new_node.id,
-    ) 
+# for node in nodes:
+#     user_prompt = construct_prompt(node)
+#     response = client.generate(model="mistral-ft-optimized-1218:latest",prompt=user_prompt, stream=False)
+#     print(response)
+#     print(response["response"])
+#     new_id = str(uuid4()) # fix this ugly thing
+#     new_node = Node(
+#         type="generated",
+#         text=response["response"],
+#         local_id=new_id,
+#         id=new_id
+#     )
+#     new_edge = Edge(
+#         source=node.id,
+#         target=new_node.id,
+#     ) 
 
-    insert_node(conn, c, new_node)    
-    insert_edge(conn, c, new_edge)
+#     insert_node(conn, c, new_node)    
+#     insert_edge(conn, c, new_edge)
 
-# %%
+# # %%
 
-import random
+# import random
 
-system_message = "# system message\n\nyou are an expert in the concept of the following topic. you always respond with nothing except the integration of two separate concetps. you specialize in interpreting the core concepts using counterfactual and orthogonal viewpoints"
-pre_prompt_a = "\n\n## pre prompt a\n\nhere is the first note you need to thoroughly examine and nderstand:\n\n"
-pre_prompt_b = "\n\n## pre prompt b\n\nhere is the second note you need to thoroughly examine and understand:\n\n"
-alignment_prompt = "\n\n## alignment prompt\n\nbe creative and respond with a high information to token ratio. please dont speak to much and get straight to the core of it"
-response_primer = "\n\n## response\n\nafter thoroughly examining and taking some time to collect my thoughts, i conclude, solely based on the context provided from within the given <c></c> tags:\n"
+# system_message = "# system message\n\nyou are an expert in the concept of the following topic. you always respond with nothing except the integration of two separate concetps. you specialize in interpreting the core concepts using counterfactual and orthogonal viewpoints"
+# pre_prompt_a = "\n\n## pre prompt a\n\nhere is the first note you need to thoroughly examine and nderstand:\n\n"
+# pre_prompt_b = "\n\n## pre prompt b\n\nhere is the second note you need to thoroughly examine and understand:\n\n"
+# alignment_prompt = "\n\n## alignment prompt\n\nbe creative and respond with a high information to token ratio. please dont speak to much and get straight to the core of it"
+# response_primer = "\n\n## response\n\nafter thoroughly examining and taking some time to collect my thoughts, i conclude, solely based on the context provided from within the given <c></c> tags:\n"
 
-def construct_merge_prompt(node_a, node_b):
-    def to_markdown_codeblock(text):
-        return "\n\n <c>```markdown\n" + text + "\n```</c>"
-    return system_message + pre_prompt_a + to_markdown_codeblock(node_a.text) + pre_prompt_b + to_markdown_codeblock(node_b.text) + alignment_prompt + response_primer
+# def construct_merge_prompt(node_a, node_b):
+#     def to_markdown_codeblock(text):
+#         return "\n\n <c>```markdown\n" + text + "\n```</c>"
+#     return system_message + pre_prompt_a + to_markdown_codeblock(node_a.text) + pre_prompt_b + to_markdown_codeblock(node_b.text) + alignment_prompt + response_primer
 
-while True:
-    for i, node in enumerate(nodes):
-        node_a = node
-        node_b = random.choice(nodes)
-        user_prompt = construct_merge_prompt(node_a, node_b)
-        response = client.generate(model="mistral-ft-optimized-1218:latest",prompt=user_prompt, stream=False)
-        print(response)
-        print(response["response"])
-        new_id = str(uuid4()) # fix this ugly thing
-        new_node = Node(
-            type="generated",
-            text=response["response"],
-            local_id=new_id,
-            id=new_id
-        )
+# while True:
+#     for i, node in enumerate(nodes):
+#         node_a = node
+#         node_b = random.choice(nodes)
+#         user_prompt = construct_merge_prompt(node_a, node_b)
+#         response = client.generate(model="mistral-ft-optimized-1218:latest",prompt=user_prompt, stream=False)
+#         print(response)
+#         print(response["response"])
+#         new_id = str(uuid4()) # fix this ugly thing
+#         new_node = Node(
+#             type="generated",
+#             text=response["response"],
+#             local_id=new_id,
+#             id=new_id
+#         )
 
-        new_edge_a = Edge(
-            source=node_a.id,
-            target=new_node.id,
-        ) 
+#         new_edge_a = Edge(
+#             source=node_a.id,
+#             target=new_node.id,
+#         ) 
 
-        new_edge_b = Edge(
-            source=node_b.id,
-            target=new_node.id,
-        ) 
+#         new_edge_b = Edge(
+#             source=node_b.id,
+#             target=new_node.id,
+#         ) 
 
-        insert_node(conn, c, new_node)    
-        insert_edge(conn, c, new_edge_a)
-        insert_edge(conn, c, new_edge_b)
+#         insert_node(conn, c, new_node)    
+#         insert_edge(conn, c, new_edge_a)
+#         insert_edge(conn, c, new_edge_b)
 
-# %%
+# # %%
