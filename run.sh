@@ -1,6 +1,8 @@
 conda activate explorer
+cd /home/mcfrank/celium/explorer
 
-export CELIUM_PATH="/home/mcfrank/celium"
+export PATH_CELIUM="/home/mcfrank/celium"
+export PATH_INPUT="/home/mcfrank/posts"
 export PATH_DB="data/data.db"
 
 mkdir -p data

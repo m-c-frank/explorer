@@ -1,19 +1,18 @@
 # %%
 from sqlite3 import IntegrityError
 from pydantic import BaseModel
-from pathlib import Path
 
 import os
 from glob import glob
 
-PATH_DATA = "/home/mcfrank/posts"
+BASE_PATH = os.environ.get("PATH_CELIUM", "/home/mcfrank/celium")
+PATH_INPUT = os.environ.get("PATH_INPUT", "/home/mcfrank/notes")
+PATH_DB = os.environ.get("PATH_DB", "graph.db")
 
-BASE_PATH = Path(os.environ.get("CELIUM_PATH", "/home/mcfrank/celium"))
-PATH_DB = os.environ.get("PATH_DB", BASE_PATH / "explorer/data/graph.db")
 
 TABLE_NODES = "nodes"
 TABLE_EDGES = "edges"
-files = glob(PATH_DATA + "/*.md")
+files = glob(PATH_INPUT + "/*.md")
 
 print(files)
 
